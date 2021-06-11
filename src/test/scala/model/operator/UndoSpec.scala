@@ -11,21 +11,6 @@ import scala.collection.mutable
 class UndoSpec extends AnyFlatSpec with should.Matchers {
   behavior of "Undo"
 
-  it should "not get any value from the parameter stack" in {
-    val testStack = mutable.Stack[Double]()
-    testStack.push(1.0)
-
-    val params = Undo.getParams(testStack)
-    params shouldEqual(Seq())
-    testStack shouldEqual(mutable.Stack(1.0))
-  }
-
-  it should "return empty result for any params passed to it" in {
-    val params = Seq(1.0, 2.0, 3.0, 4.0)
-
-    Undo.processParams(params) shouldEqual(Seq())
-  }
-
   it should "do nothing if the operation stack is empty" in {
     val mockOperationStack = mock[mutable.Stack[Operation]]
 

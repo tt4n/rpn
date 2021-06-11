@@ -6,9 +6,6 @@ import model.operator.traits.Operator
 import scala.collection.mutable
 
 object Undo extends Operator {
-  override def getParams(paramStack: mutable.Stack[Double]): Seq[Double] = Seq()
-  override def processParams(params: Seq[Double]): Seq[Double] = Seq()
-
   /**
    * Undo is a special operator that need to read data from the operationStack & write data to parameter stack, hence
    * overriding the operate function directly

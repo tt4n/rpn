@@ -1,9 +1,9 @@
 package model
 
-import exception.{InsufficientParametersException, InvalidParametersException, InvalidTokenException}
+import java.util.Scanner
+import exception.{InsufficientParametersException, InvalidTokenException}
 import model.operator.traits.Operator
 import model.operator.{Add, Clear, Divide, Multiply, Sqrt, Subtract, Undo}
-
 import scala.collection.mutable
 import scala.math.BigDecimal.RoundingMode
 
@@ -34,28 +34,63 @@ class Calculator {
    * @param input
    */
   def handle(input: String): Unit = {
-    // TODO keep current position
     val items = parseInput(input)
 
-    items.foreach { item =>
-      val maybeOperator = supportedOperators.get(item)
+    items.foreach { item: (String, Int) =>
+      val token    = item._1
 
-      // Check whether it is a valid operator first
-      if (maybeOperator.nonEmpty) {
-        val operator = maybeOperator.get
-        operator.operate(paramStack, operationStack)
-      } else {
+      // position of token in user input
+      val position = item._2
+
+      handleToken(position, token)
+    }
+  }
+
+  /**
+   * Handle a single token from user input
+   * @param position
+   * @param token
+   * @return
+   */
+  private def handleToken(position: Int, token: String) = {
+    val maybeOperator = supportedOperators.get(token)
+
+    maybeOperator match {
+      // Token is a valid operator
+      case Some(operator) =>
         try {
-          val doubleValue = item.toDouble
+          operator.operate(paramStack, operationStack)
+        } catch {
+          case e: InsufficientParametersException =>
+            // Add more details to the exception errorMessage - change position to be 1-based
+            val errorMessage = s"operator $token (position: ${position + 1}): insufficient parameters"
 
-          paramStack.push(doubleValue)
-          operationStack.push(Operation(Seq(), Seq(doubleValue)))
+            throw InsufficientParametersException(errorMessage)
+        }
+
+      // Not an operator - try to process as a parameter
+      case None =>
+        val doubleValue = try {
+          token.toDouble
         } catch {
           case e: NumberFormatException =>
-            throw InvalidTokenException(s"Unknown token $item at position <x>")
+            throw InvalidTokenException(s"Unknown token $token at position ${position + 1}")
         }
-      }
+
+        handleParameter(doubleValue)
     }
+  }
+
+  /**
+   * Handle a parameter
+   * @param parameter
+   * @return
+   */
+  private def handleParameter(parameter: Double): Unit = {
+    paramStack.push(parameter)
+
+    // add to operation stack - required by certain operator, e.g., undo
+    operationStack.push(Operation(Seq(), Seq(parameter)))
   }
 
   /**
@@ -72,13 +107,22 @@ class Calculator {
     }
   }
 
+  /**
+   * Set parameter stack
+   * @param stack
+   */
+  def setParamStack(stack: mutable.Stack[Double]): Unit = {
+    paramStack = stack
+  }
+
+  /**
+   * Get the list of operations in stack
+   * @return
+   */
   def getOperationsInStack(): Seq[Operation] = {
     operationStack.toSeq.reverse
   }
 
-  def setParamStack(stack: mutable.Stack[Double]): Unit = {
-    paramStack = stack
-  }
   /**
    * Set supported operators
    * @param operators
@@ -90,10 +134,20 @@ class Calculator {
   /**
    * Parse user input
    * @param input
-   * @return
+   * @return A list of tuple containing the token value and its starting position
    */
-  private def parseInput(input: String): Seq[String] = {
-    // TODO keep current position
-    input.split("\\s+")
+  private def parseInput(input: String): Seq[(String, Int)] = {
+    var tokensWithPosition = Vector[(String, Int)]()
+
+    val scanner = new Scanner(input)
+
+    while (scanner.hasNext()) {
+      val token    = scanner.next()
+      val position = scanner.`match`().start()
+
+      tokensWithPosition :+= (token, position)
+    }
+
+    tokensWithPosition
   }
 }
