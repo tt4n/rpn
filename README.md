@@ -15,7 +15,7 @@ To run the unit tests:
 sbt test
 ```
 
-To run the integration test (against the 8 examples provided in the PDF file)
+To run the integration test (against the 8 examples provided in the PDF document)
 ```
 sbt it:test
 ```
