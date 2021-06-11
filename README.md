@@ -1,8 +1,9 @@
 # Command-line based RPN calculator
 
-Require the following to build & package the project:
-- sbt 1.4.*
-- scala 2.13.*
+Require the following to run, build & package the project:
+- JDK 8+
+- sbt 1.4.*: to install on Mac ```brew install sbt`` [detailed instructions](https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Mac.html)
+- scala 2.13.* (only required for running the packaged jar file)
 
 To run the application:
 ```
@@ -14,12 +15,17 @@ To run the unit tests:
 sbt test
 ```
 
-To run the integration tests (against the 8 examples provided in the PDF file)
+To run the integration test (against the 8 examples provided in the PDF file)
 ```
 sbt it:test
 ```
 
-The sbt-assembly plugin is used for packaging the project into a singe JAR file, so it can be run with Java, without requiring Scala:
+To package the project into a jar file runnable with Scala
+```
+sbt package
 ```
 
+To run the packaged jar file with Scala
+```
+scala target/scala-2.13/rpn_2.13-0.1.jar
 ```

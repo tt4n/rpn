@@ -5,7 +5,7 @@ object CalculatorApp extends App {
   val calculator = new Calculator()
 
   while (true) {
-    val input = readLine()
+    val input = readLine(">")
 
     if (input.trim != "") {
       try {
