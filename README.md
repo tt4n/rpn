@@ -2,7 +2,7 @@
 
 Requires the following to run, build & package the project:
 - JDK 8+
-- sbt 1.4+: to install on Mac ```brew install sbt``` ([detailed instructions](https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Mac.html))
+- sbt 1.4+: to install on Mac ```brew install sbt``` ([detailed instructions if not on Mac](https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Mac.html))
 - scala 2.13 (only required for running the packaged jar file)
 
 To run the application:
